@@ -1,2 +1,1 @@
-# alx-system_engineering-devops
-Shell, basics bash scripting
+alx-system_engineering-devops for script files
