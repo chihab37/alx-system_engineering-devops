@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
-# Gracefully reloads Gunicorn.
+# Gracefully reloads Gunicorn without downtime.
 
-pgrep gunicorn | xargs kill -HUP
+GUNICORN_APP_NAME='web_flask.0-hello_route:app'
+
+# Find the Gunicorn master process ID
+gunicorn_master_pid=$(ps aux | grep gunicorn | grep $GUNICORN_APP_NAME | grep master | awk '{print $2}')
+
+if [ -z "$gunicorn_master_pid" ]; then
+    echo "No Gunicorn master process found for $GUNICORN_APP_NAME."
+    exit 1
+fi
+
+# Send HUP signal to Gunicorn master process
+echo "Sending HUP signal to Gunicorn master process (PID: $gunicorn_master_pid)..."
+kill -HUP $gunicorn_master_pid
+
+echo "Gunicorn has been gracefully reloaded."
